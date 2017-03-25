@@ -27,7 +27,7 @@ var app = {
 
 	search:function() {
 		var queryURL = 'https://api.data.gov/ed/collegescorecard/v1/schools?api_key=D7r68I5ZV97qXjLtrdTqnxqPTb750zgQrIaRm21s'; 
-		var queryFields = '&fields=school.name,school.city,school.zip,school.state,school.school_url';
+		var queryFields = '&fields=2014.student.retention_rate.four_year.full_time,2014.cost.attendance.academic_year,school.name,2014.completion.completion_rate_4yr_150nt,school.name,school.city,school.zip,school.state,school.school_url';
 		queryURL += queryFields;
 		var search = {};
 		
