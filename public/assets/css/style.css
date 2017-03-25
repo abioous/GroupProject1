@@ -1,0 +1,11 @@
+header, footer {
+	text-align: center;
+	background-color: black;
+	color: white;
+	padding: 0.4em;
+	min-height:2em;
+}
+
+main {
+	min-height: 90vh;
+}

@@ -36,12 +36,15 @@ var app = {
 			queryURL += '&school.name=' + name;
 			search['name'] = name;
 		}
-
+	$('#name').val('');
+		
 		var city = $('#city').val();
+
 		if(city.trim() != ""){
 			queryURL += '&school.city=' + city;
 			search['city'] = city;
 		}
+		$('#city').val('');
 
 		 $.ajax({
           url: queryURL,
@@ -141,45 +144,68 @@ var app = {
 		
 			//show no more then 20 most popular searches
 			var maxHistryCount = sortedRecords.length;
-			if(maxHistryCount > 20) {
-				maxHistryCount = 20;
+			if(maxHistryCount > 10) {
+				maxHistryCount = 10;
 			}
+			var items = '';
+			
 			for(var i = 0;i< maxHistryCount;i++) {
 				var record = sortedRecords[i] 
 				var search = '';
 				var title = '';
-				var item = $('<li>');
+
+				var template = '<li class="list-group-item d-flex justify-content-between"  data-id="{{searchId}}" data-name="{{name}}" data-city="{{city}}"><span>{{title}}</span><span class="badge badge-default">{{count}}</span></li>';
+				var attributes = ''
 				for(var key in record) {
 					if(key == 'counter' || key == 'id') {
 						continue; //skip to next iteration
 					}
-					item.attr('data-' + key, record[key]);
 					if(title.length > 0) {
 						title += ',';
 					}
 					title  += record[key]
 				}
+				if(!record.name) {
+					record.name = '';
+				}
+				if(!record.city) {
+					record.city = '';	
+				}
+				var data = {
+					searchId:record.id,
+					attributes:attributes,
+					title:title,
+					name: record.name,
+					city:record.city,
+					count:record.counter,
+				};
+				var expandedTemplate = Mustache.render(template, data);
+				items +=  expandedTemplate;
 
-				item.addClass('list-group-item');
-				item.addClass('d-flex');
-				item.addClass('justify-content-between');
-				list.append(item);
-				item.attr('data-search', search);
-				item.attr('data-id', record.id);
-				var searchText = $('<span>');
+				// item.addClass('list-group-item');
+				// item.addClass('d-flex');
+				// item.addClass('justify-content-between');
+				// list.append(item);
+				// item.attr('data-search', search);
+				// item.attr('data-id', record.id);
+				// var searchText = $('<span>');
 								
 
-				searchText.text(title);
-				item.append(searchText);
+				// searchText.text(title);
+				// item.append(searchText);
 
-				var counter = $('<span>');
-				counter.addClass('badge');
-				counter.addClass('badge-default');
+				// var counter = $('<span>');
+				// counter.addClass('badge');
+				// counter.addClass('badge-default');
 				
-				counter.text(record.counter);
-				item.append(counter);
+				// counter.text(record.counter);
+				// item.append(counter);
 				
-				item.click(function() {
+
+				
+			}
+			list.html(items);
+			list.children('li').click(function() {
 					var name = $(this).attr('data-name');
 					$('#name').val(name);
 
@@ -189,9 +215,7 @@ var app = {
 					app.search(true);
 					
 
-				})
-			}
-			
+			})
 
 
 
@@ -201,7 +225,6 @@ var app = {
 		this.database.ref().on("value", function(data) {
 			var recordWithId = data.val();
 			for(var k in  recordWithId) {
-				console.log('reading search: ' + k);
 				app.searches[k] = recordWithId[k];
 			}
 			app.renderHistory();
